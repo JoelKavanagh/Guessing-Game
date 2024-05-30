@@ -1,0 +1,166 @@
+
+/**
+ * @author Joel Kavanagh - 22336168 Group 65
+ * @version 23/2/23
+ * 
+ * description of game: there are 10 guesses allowed. 
+ * 
+ * necessary java packages are imported. 
+ * enumerated types are used to improve code readability regarding the range which include nested set and get methods to have values assigned to MIN_RANGE and MAX_RANGE. 
+ * Main method starts with an introductory message dialog to the user. 
+ * The answer that the user must guess then gets randomly generated. 
+ * if the user has not used up all of their guesses the if statement will run: 
+ * a scanner object will check for the user input
+ * integer.parseInt is used to convert answer inputted to an int to be manipulated in program and checked for correctness
+ * The user will get a message displaying how many guesses they have remaining and reminding them of the range to guess within (100 - 999). 
+ * The user will get a message confirming the guess they just choose and asking for them to click ok to see if it is correct or not
+ * Try and catch statements check for a number of possible exceptions, including the user inputting an inappropriate key, for example the letter a, 
+ * The user unexpectedly exciting the game, or the user not entering anything at all. 
+ * Appropriate JOptionPane error messages and information messages are deployed. 
+ * the answer is checked by the check method being invoked and the result of this check is assigned to variable result.
+ * based on the outcome of the check method the user will receive a message telling them they either won or lost and to guess again with a lower or higher tip added to refine their next guess
+ * this will continue while the number of guesses is less than the maximum allowed and they have not yet guessed the correct answer
+ * If the user runs out of guesses before they have guessed the answer they will get a warning message telling them that and revealing the answer. 
+ * The check method works using a simple greater than/ less than if else statement.
+ */
+
+//importing necessary packages
+import java.util.Random;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
+import java.util.InputMismatchException;
+import java.io.StringReader;
+import java.util.*; 
+public class GuessingGame {
+
+    //creating random object
+    private static final Random rand = new Random();
+
+    //enumerated type to improve code readability
+    private enum Range {
+        MIN_RANGE(100),
+
+        MAX_RANGE(900);
+
+        private final int value;
+        /**
+         * nested set method to make clear which value variable is being referenced
+         * @param the int value, the value representing the assigned value of the variables in enumerated type range
+         */
+        Range(int value) {
+            this.value = value;
+        }
+
+        /**
+         * nested get method to get the value being assigned to variables in the enumerated type range
+         * @return the int value representing the assigned value of the variables in enumerated type range
+         */
+        public int getValue() {
+            return value; 
+        }
+    }      
+
+    private static final int maxGuesses = 10;
+
+    /**
+     * Main method starts with an introductory message dialog to the user. 
+     * The answer that the user must guess then gets randomly generated. 
+     * if the user has not used up all of their guesses the if statement will run: 
+     * a scanner object will check for the user input
+     * integer.parseInt is used to convert answer inputted to an int to be manipulated in program and checked for correctness
+     * The user will get a message displaying how many guesses they have remaining and reminding them of the range to guess within (100 - 999). 
+     * The user will get a message confirming the guess they just choose and asking for them to click ok to see if it is correct or noy
+     * Try and catch statements check for a number of possible exceptions, including the user inputting an inappropriate key, for example the letter a, 
+     * The user unexpectedly exciting the game, or the user not entering anything at all. 
+     * Appropriate JOptionPane error messages and information messages are deployed. 
+     * the answer is checked by the check method being invoked and the result of this check is assigned to variable result.
+     * based on the outcome of the check method the user will recieve a message telling them they either won or lost and to guess again with a lower or higher tip added to refine their next guess
+     * this will continue while the number of guesses is less than the maximum allowed and they have not yet guessed the correct answer
+     */
+    public static void main(String [] args){
+        //using JOPtionPane to inform the user about the game in a message dialog
+        JOptionPane.showMessageDialog(null,"Welcome to Guessing Game! Written by Joel Kavanagh (22336168).\n" +
+            "I have chosen a random number between " + Range.MIN_RANGE.getValue() + " and " + (Range.MAX_RANGE.getValue() + 99) + " inclusive.\n" + 
+            "You have " + maxGuesses + " guesses to guess the correct number.\n" +
+            "Good Luck!\n" +
+            "CLick OK to start...\n");
+
+        
+        int guess = 0; 
+        int noOfGuesses = 0; //the number of guesses the user has taken
+        int answer = rand.nextInt(Range.MAX_RANGE.getValue()) + Range.MIN_RANGE.getValue(); //creating a random variable in the range of 100 and 999 and assigning it as the int answer 
+
+        //if else loop incapsulating the do while statement. Will only happen if the number of guesses the user has taken is not equal to the max number of guesses allowed
+        if (noOfGuesses != maxGuesses){
+            do{
+                String input = JOptionPane.showInputDialog("You have " + (maxGuesses - noOfGuesses) + " guesses remaining\n" +
+                        "Guess a number between " + Range.MIN_RANGE.getValue() + " and " + (Range.MAX_RANGE.getValue() + 99) + "\n");
+                try {
+                    Scanner scan = new Scanner(new StringReader(input)); //creating new scanner object based on user input
+                }
+                catch(NullPointerException e){
+                    JOptionPane.showMessageDialog(null, "You exited. Thanks for playing my Game", "Information", JOptionPane.INFORMATION_MESSAGE); //if the user exits the game unexpectedly
+                    System.exit(0);
+                }
+
+                try{  guess = Integer.parseInt(new Scanner(input).next());
+                    if(guess < Range.MIN_RANGE.getValue() || guess > (Range.MAX_RANGE.getValue() + 99)) {
+                        throw new IllegalArgumentException();
+                    }
+
+                    JOptionPane.showMessageDialog(null,"You guessed the number " + guess + "\n" +
+                        "click OK to see if you were correct" ); 
+                    String result = check(guess, answer);
+                    if(!result.equals("Correct - you win!") && (noOfGuesses == maxGuesses - 1)) {
+                        JOptionPane.showMessageDialog(null, "incorrect", "Information", JOptionPane.INFORMATION_MESSAGE);
+                        noOfGuesses ++; 
+                    }
+                    else if(!result.equals("Correct - you win!")){
+                        JOptionPane.showMessageDialog(null, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+                        noOfGuesses ++; 
+                    }
+                    else{ 
+                        JOptionPane.showMessageDialog(null, "You won. The answer you chose was " + guess + " and the correct answer was " + answer +".\n" +
+                            "Well done.\n" );
+                    }
+                } catch(NumberFormatException e)  {
+                    JOptionPane.showMessageDialog(null, "Incorrect input. You must enter a positive whole number, for example 105, 217 etc..", "Error", JOptionPane.ERROR_MESSAGE);
+
+                }
+
+                catch(NoSuchElementException e) {
+                    JOptionPane.showMessageDialog(null, "You didn't enter anything. Please enter a whole number within the specified range", "Error", JOptionPane.ERROR_MESSAGE);
+
+                }
+                catch(IllegalArgumentException e) {
+                    JOptionPane.showMessageDialog(null, "The number you enter must be between 100 and 999 inclusive. Please enter a whole number within the specified range", "Error", JOptionPane.ERROR_MESSAGE);
+
+                }
+
+            }
+
+            while (noOfGuesses < maxGuesses && guess != answer);
+        } 
+
+        if (noOfGuesses == maxGuesses){
+            JOptionPane.showMessageDialog(null, "You have no guesses left. The answer was " + answer + "." + " Game over. Thanks for playing!", "Warning", JOptionPane.WARNING_MESSAGE);  
+        }
+
+    }
+    /**
+     * Check method 
+     * checks if the guess is higher, lower or the same as the randomly generated answer. 
+     * @param int g representing guess and int a representing answer
+     * @return a message displaying whether you won or lost and if the correct answer is higher or lower.
+     */
+    public static String check(int g, int a) {
+        if(g < a) {
+            return "you lost, pick higher and try again";
+        } else if(g > a) {
+            return "you lost, pick lower and try again";
+        } else {
+            return "Correct - you win!";
+        }
+
+    }
+}
