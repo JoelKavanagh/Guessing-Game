@@ -1,0 +1,369 @@
+package GUIProject;
+/** 
+* 
+*
+* @author Joel Kavanagh(22336168)
+* @version (Version 1 21.03.23 at 00:06)
+* 
+* 
+* Testing description:
+* a test class was made to test this GuessingGame class.The description of which is available in the file header comment of that respective class.
+* Manual tests were also done by running and experimenting with the game:
+* Numbers which were too high but within the range were typed in to see the response of the program. The program responded accordingly by displaying a too high message through the use of a label. The user was then better informed to make their next guess.
+* Numbers which were too low but within the range were typed in to see the response of the program. The program responded accordingly by displaying a too low message through the use of a label. The user was then better informed to make their next guess.
+* Non numbers were typed in to see the response of the program. The program responded accordingly by advising the user that what they entered wasn't a number, and to enter an integer between the range 100 and 999. No guesses were used.
+* Numbers out of range were typed in to see the response of the program. The program responded accordingly by advising the user of the correct range to make their guess in. No guesses were used.
+* the enter key was also experimented with. The code was built to give the same functionailty when using the enter key as when using the check button, and this was achieved. 
+* Many games were played to test other general functionality of the game. 
+* A congratulations message was given to the user when they succeeded. 
+* The help button displayed a help message when invoked and offered info about the game.
+* The exit button quit the window as intended. 
+* 
+* 
+*/
+
+
+//importing necessary packages for game
+import java.util.Random;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
+import java.util.InputMismatchException;
+import java.io.StringReader;
+import java.util.*;
+
+
+
+//importing necessary packages for gui
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.WindowConstants;
+import java.awt.GridLayout;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Random;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
+import java.util.InputMismatchException;
+import java.io.StringReader;
+import java.util.*;
+import static javax.management.Query.and;
+public class GuessingGame extends JFrame implements ActionListener
+{
+private JPanel panel_main, panel_game, mainPanel;
+private JLabel label_Inst, label_Info, label_guesses;
+private JTextField textfield1, textfield_input;
+private JButton button_help, button_start;
+private JButton exitBtn;
+private JFrame frame;
+
+private static final Random rand = new Random();
+int answer = rand.nextInt((900 - 100) + 1) + 100;
+
+int max_tries = 10, nr_of_tries = 0, guess = 0;
+
+/**
+* Constructor for objects of class GuessingGame
+*/
+public GuessingGame()
+{
+    
+    
+//first the guessing game logic constructors
+
+setTitle("Guessing Game");
+setPreferredSize(new Dimension(800, 600));
+JFrame frame = new JFrame("My Frame");
+
+frame.setVisible(true);
+
+setLayout(new BorderLayout());
+
+//Create a new panel to hold the label, textfield, and first button
+panel_main = new JPanel();
+panel_main.setBackground(Color.LIGHT_GRAY);
+panel_main.setLayout(new GridLayout(0,1));
+
+{
+label_Inst = new JLabel("<html>Welcome to my Game. Click New Game to start.<br><br>",SwingConstants.CENTER);
+panel_main.add(label_Inst);
+
+label_guesses = new JLabel("<html>Guesses:....<br><br>",SwingConstants.CENTER);
+panel_main.add(label_guesses);
+
+button_help = new JButton("Help");
+button_help.addActionListener(this);
+button_help.setForeground(Color.blue);
+panel_main.add(button_help);
+
+button_start = new JButton("New Game");
+button_start.addActionListener(this);
+panel_main.add(button_start);
+
+
+
+button_start.addActionListener(new ActionListener() {
+@Override
+public void actionPerformed(ActionEvent e) {
+// Set the visibility of panel_game to true
+panel_game.setBackground(Color.gray);
+panel_game.setVisible(true);
+button_start.setText("Game in Progress...click here to check");
+button_start.setForeground(Color.GREEN);
+
+}
+});
+
+panel_main.add(button_start);
+
+exitBtn = new JButton("Exit");
+exitBtn.setForeground(Color.red);
+exitBtn.addActionListener(this);
+panel_main.add(exitBtn);
+}
+
+panel_game = new JPanel();
+panel_game.setLayout(new GridLayout(1,0)); {
+label_Info = new JLabel("enter a guess between 100 and 999 into the text box on the right ->");
+label_Info.setFont(new Font("SansSerif", Font.PLAIN, 11)); // Set font size to 16
+label_Info.setHorizontalAlignment(SwingConstants.CENTER); // Center horizontally
+
+panel_game.add(label_Info);
+textfield_input = new JTextField();
+
+//allowing for enter to be used
+
+ textfield_input.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                 int guess = Integer.parseInt(textfield_input.getText());
+   
+                
+                 label_Info.setForeground(Color.red);
+        label_Info.setText("<html>You Entered: "  + guess + "<br>\"Number of tries left: "+ (max_tries-nr_of_tries)); 
+
+                textfield_input.setText("");
+                
+    
+     
+     
+      if ((nr_of_tries < max_tries))  {    
+                   
+               
+                if (guess < answer) {
+       nr_of_tries = nr_of_tries + 1;
+            button_help.setText("Too Low");   
+            button_help.setForeground(Color.red);
+        } 
+   
+    if (guess > answer) {
+        nr_of_tries = nr_of_tries + 1;
+            button_help.setText("Too High"); 
+            button_help.setForeground(Color.red);
+        }
+    if (guess == answer) {
+        label_Info.setForeground(Color.green);
+        label_Info.setText("You Entered: " +guess+" you're a genius, answer is : "+answer);
+            button_help.setText("C O N G R A T U L A T I O N S");
+        button_help.setForeground(Color.green); }
+         
+            else {
+        
+        label_Info.setForeground(Color.red);
+        label_Info.setText("<html>You Entered: "  +guess + "<br>\"Number of tries left: "+ (max_tries-nr_of_tries)); 
+        label_guesses.setText(label_guesses.getText() + guess +": ");
+        
+    }
+      } else {
+          if (nr_of_tries == 10){
+        label_Info.setText("too many attempts. The answer was " + answer);
+        } 
+      }
+    
+    
+ 
+            
+            }
+        });
+ 
+//end of allowing for enter code
+
+
+textfield_input.setColumns(10); // Set preferred width to 10 characters
+textfield_input.setMargin(new Insets(5, 5, 5, 5)); // Add 5 pixels of padding on all sides
+
+panel_game.add(textfield_input);
+textfield_input.setText("");
+panel_game.setVisible(false);
+}
+
+JPanel mainPanel = new JPanel(new BorderLayout());
+mainPanel.add(panel_main, BorderLayout.SOUTH);
+mainPanel.add(panel_game, BorderLayout.CENTER);
+// Add the main panel to the JFrame and pack the window
+setContentPane(mainPanel);
+pack();
+setLocationRelativeTo(null);
+setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+setVisible(true);
+}
+
+@Override
+
+
+
+
+    
+
+
+public void actionPerformed(ActionEvent ae) {
+    
+    
+ 
+    
+    
+  
+ if ((nr_of_tries < max_tries) && (ae.getSource() == button_start))  {    
+                
+    
+try{
+   int guess = Integer.parseInt(textfield_input.getText());
+   
+   if ((guess < 100) || (guess > 999)) {
+       nr_of_tries = nr_of_tries;
+            label_Info.setText("<html> Enter a number between 100 and 999"+ "<br> Number of tries left: "+ (max_tries-nr_of_tries));        
+        }    
+   
+   
+   if (guess < answer) {
+       nr_of_tries = nr_of_tries + 1;
+            button_help.setText("Too Low");   
+            button_help.setForeground(Color.red);
+        } 
+   
+    if (guess > answer) {
+        nr_of_tries = nr_of_tries + 1;
+            button_help.setText("Too High"); 
+            button_help.setForeground(Color.red);
+        }
+   
+   
+   
+  
+    
+    
+    
+    if (guess == answer) {
+        label_Info.setForeground(Color.green);
+        label_Info.setText("You Entered: " +guess+" you're a genius, answer is : "+answer);
+        label_guesses.setText(label_guesses.getText() + guess +": ");
+        textfield_input.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+              
+            }
+        });
+        button_help.setText("C O N G R A D U L A T I O N S");
+        button_help.setForeground(Color.green);
+          // Clear the textfield
+                textfield_input.setText("");
+        
+    }
+        else {
+        
+        label_Info.setForeground(Color.red);
+        label_Info.setText("<html>You Entered: "  +guess + "<br>\"Number of tries left: "+ (max_tries-nr_of_tries)); 
+        label_guesses.setText(label_guesses.getText() + guess +": ");
+    }  // Clear the textfield
+                textfield_input.setText("");
+  
+  
+} 
+
+catch(NumberFormatException ex){ // handle your exception
+   
+    if ((nr_of_tries > 0) || (textfield_input.getText().length() != 0))
+    { 
+    nr_of_tries = nr_of_tries;   
+    
+    label_Info.setText("<html> \"You didn't enter a number. Enter a number next time"+ "<br> Number of tries left: "+ (max_tries-nr_of_tries)); 
+    button_help.setText("Not A Number");
+    button_help.setForeground(Color.red);
+                
+  }
+}
+
+ 
+}
+
+else {
+     if (nr_of_tries == 10){
+        label_Info.setText("too many attempts. The answer was " + answer);
+        } 
+ }
+    
+  boolean clicked = false;   
+if(ae.getSource() == button_help) {
+   
+   
+if ((clicked == false) && button_help.getText() == "Help") { 
+ clicked = true;   
+label_Inst.setText("<html>You must enter a positive integer between 100 and 999<br> The game will then inform you if your guess was higher or lower than the correct answer.<br> You have 10 guesses.");
+button_help.setText("OK");
+
+}
+
+else {
+    
+label_Inst.setText("<html>Welcome to my Guessing Game. You must guess the random number between 100 and 999. Click New Game to start.<br><br>");
+button_help.setText("Help");
+ clicked = false;
+}
+}
+
+
+
+
+
+if(ae.getSource() == button_start) {
+label_Inst.setText("<html>Starting New Game<br><br>");    
+}
+
+if(ae.getSource() == exitBtn) {
+dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+}
+} //END OF ACTIONS________________________
+
+
+
+
+public static void main(String[] args) {
+// Create an instance of your GUI class
+GuessingGame gui = new GuessingGame();
+// Make the GUI visible
+gui.setVisible(true);
+
+  
+  
+}
+public static String convertToMultiLine(String orig) {
+return "<html>" + orig.replaceAll("\n", "<br>");
+}
+
+    private String convertToMultiLine(String welcome_to_my_Game_Click_New_Game_to_star, int CENTER) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private String getText() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+}
+
+
+//***************************************************
+
+
